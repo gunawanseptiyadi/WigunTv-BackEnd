@@ -1,43 +1,48 @@
-const multer = require('multer')
-const response = require('../helper/response')
+const multer = require("multer");
+const helper = require("../helper/response");
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './images')
+  destination: (request, file, callback) => {
+    callback(null, "./images");
   },
-  filename: function (req, file, cb) {
-    cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname)
-  }
-})
+  filename: (request, file, callback) => {
+    callback(
+      null,
+      new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname
+    );
+  },  
+});
 
-const fileFilter = (req, file, cb) => {
+const fileFilter = (request, file, cb) => {
   if (
-    file.mimetype === 'image/jpg' ||
-    file.mimetype === 'image/png' ||
-    file.mimetype === 'image/jpeg'
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/webp" ||
+    file.mimetype === "application/octet-stream"
   ) {
-    cb(null, true)
+    cb(null, true);
+    console.log(Error)
   } else {
-    cb(new Error('File format must be png or jpg'), false)
+    cb(new Error("Extension file must be PNG , JPEG or webp"), false);
+    
   }
-}
+};
 
-const maxSize = 1 * 1024 * 1024
 const upload = multer({
   storage,
-  limits: { fileSize: maxSize },
-  fileFilter
-}).single('photo_profil')
+  fileFilter,
+  limits: { fieldSize: 20 },
+}).single("photo_profil");
 
-const uploadFilter = (req, res, next) => {
-  upload(req, res, function (err) {
+const uploadFilter = (request, response, next) => {
+  upload(request, response, function (err) {
     if (err instanceof multer.MulterError) {
-      return response.response(res, 400, err.message)
+      return helper.response(response, 400, err.message);
     } else if (err) {
-      return response.response(res, 400, err.message)
+      return helper.response(response, 400, err.message);
     }
-    next()
-  })
-}
+    next();
+  });
+};
 
-module.exports = uploadFilter
+module.exports = uploadFilter;  

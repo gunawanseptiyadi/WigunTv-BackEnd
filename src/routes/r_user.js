@@ -1,11 +1,26 @@
-const router = require('express').Router();
+const router = require("express").Router();
 
-const { getAllUser, postNewUser } = require('../controller/c_user')
+const { authorization } = require("../middleware/auth")
 
-const uploadPhoto = require('../middleware/multerProfile')
+const {
+  getAllUser,
+  getUserById,
+  postNewUser,
+  patchUserProfil,
+  patchUserPassword,
+  loginUser
+} = require("../controller/c_user");
 
-router.get('/', getAllUser);
+const uploadPhoto = require("../middleware/multerProfile");
 
-router.post('/register', uploadPhoto, postNewUser);
+router.get("/", getAllUser);
+
+router.post("/register", uploadPhoto, postNewUser);
+
+router.patch("/:id", authorization, uploadPhoto, patchUserProfil, patchUserPassword);
+
+router.post("/login", loginUser);
+
+router.get("/:id", authorization, getUserById);
 
 module.exports = router;
