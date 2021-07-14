@@ -71,6 +71,36 @@ module.exports = {
     }
   },
 
+  loginUser: async (req, res) => {
+    try {
+      console.log(req.body);
+      const { username, password } = req.body;
+      const checkDataUser = await loginUserModel(username);
+      console.log(checkDataUser);
+      if (checkDataUser.length > 0) {
+        const checkPassword = bcrypt.compareSync(
+          password,
+          checkDataUser[0].password
+        );
+        if (checkPassword) {
+          const { username } = checkDataUser[0]
+          const payload = { username }
+          const token = jwt.sign(payload, 'RAHASIA', { expiresIn: '30m' })
+          const result = { ...payload, token }
+
+          return response.response(res, 200, "You are Loging in !", result);
+        } else {
+          return response.response(res, 400, "Password Incorrect !");
+        }
+      } else {
+        return response.response(res, 400, "username not registered !");
+      }
+    } catch (error) {
+      console.log(error);
+      return helper.response(res, 400, "Bad Request", error);
+    }
+  },
+
   patchUserProfil: async (req, res) => {
     try {
         const {
@@ -122,40 +152,5 @@ module.exports = {
       return response.response(res, 400, "Bad Request", error);
     }
   },
-
-  loginUser: async (req, res) => {
-    try {
-      console.log(req.body);
-      const { username, password } = req.body;
-      const checkDataUser = await loginUserModel(username);
-      console.log(checkDataUser);
-      if (checkDataUser.length > 0) {
-        const checkPassword = bcrypt.compareSync(
-          password,
-          checkDataUser[0].password
-        );
-        if (checkPassword) {
-          const { username } = checkDataUser[0]
-          const payload = { username }
-          const token = jwt.sign(payload, 'RAHASIA', { expiresIn: '30m' })
-          const result = { ...payload, token }
-
-          return response.response(res, 200, "You are Loging in !", result);
-        } else {
-          return response.response(res, 400, "Password Incorrect !");
-        }
-      } else {
-        return response.response(res, 400, "username not registered !");
-      }
-    } catch (error) {
-      console.log(error);
-      return helper.response(res, 400, "Bad Request", error);
-    }
-  },
-
-
-
-
-
 
 };

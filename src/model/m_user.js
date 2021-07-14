@@ -50,6 +50,18 @@ module.exports = {
     });
   },
 
+  loginUserModel: (username) => {
+    return new Promise((resolve, reject) => {
+      client.query(
+        "SELECT * FROM users WHERE username = $1",
+        [username],
+        (error, result) => {
+          !error ? resolve(result.rows) : reject(new Error(error));
+        }
+      );
+    });
+  },
+
   patchUserProfilModel: (data, id, photo) => {
     return new Promise((resolve, reject) => {
       client.query(
@@ -87,17 +99,7 @@ module.exports = {
     });
   },
 
-  loginUserModel: (username) => {
-    return new Promise((resolve, reject) => {
-      client.query(
-        "SELECT * FROM users WHERE username = $1",
-        [username],
-        (error, result) => {
-          !error ? resolve(result.rows) : reject(new Error(error));
-        }
-      );
-    });
-  },
+  
 
 
 };
