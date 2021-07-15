@@ -119,7 +119,8 @@ module.exports = {
           gender,
           photo
         }
-        const checkId = await getUsersByIdModel(id);
+        const {id} = req.params
+        const checkId = await getUserByIdModel(id);
         if (checkId.length > 0) {
           const result = await patchUserProfilModel(setData, req.params.id, req.file.filename);
           return response.response(res, 200, `Success update data profil with id : ${req.params.id}`, result);
@@ -133,17 +134,17 @@ module.exports = {
 
   patchUserPassword: async (req, res) => {
     try {
-      const { id } = req.params;
       const { password } = req.body;
       const salt = bcrypt.genSaltSync(10);
       const encryptPassword = bcrypt.hashSync(password, salt);
       const setPass = {
         password: encryptPassword,
       };
-      const checkId = await getUsersByIdModel(id);
+      const { id } = req.params;
+      const checkId = await getUserByIdModel(id);
       if (checkId.length > 0) {
         const result = await patchUserPasswordModel(setPass, id);
-        return response.response(res, 200, "Success Patch User Data", result);
+        return response.response(res, 200, `Success update data username with id : ${req.params.id}`, result);
       } else {
         return response.response(res, 404, `Password By Id : ${id} Not Found`);
       }

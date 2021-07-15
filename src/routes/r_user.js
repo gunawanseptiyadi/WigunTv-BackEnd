@@ -13,11 +13,13 @@ const {
 
 const uploadPhoto = require("../middleware/multerProfile");
 
-router.get("/", getAllUser);
+router.get("/", authorization, getAllUser);
 
 router.post("/register", uploadPhoto, postNewUser);
 
-router.patch("/:id", authorization, uploadPhoto, patchUserProfil, patchUserPassword);
+router.patch("/:id", authorization, uploadPhoto, patchUserProfil);
+
+router.patch("/changePassword/:id", authorization, patchUserPassword);
 
 router.post("/login", loginUser);
 

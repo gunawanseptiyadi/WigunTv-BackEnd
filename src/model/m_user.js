@@ -28,7 +28,7 @@ module.exports = {
   postNewUserModel: (data, photo) => {
     return new Promise((resolve, reject) => {
       client.query(
-        "INSERT INTO users (first_name, last_name, email, tgl_lahir, gender, photo_profil, username, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, first_name, last_name, email, tgl_lahir, gender, photo_profil, username, password",
+        "INSERT INTO users (first_name, last_name, email, tgl_lahir, gender, photo_profil, username, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, first_name, last_name, email, tgl_lahir, gender, photo_profil, username",
         [
           data.first_name,
           data.last_name,
@@ -80,9 +80,8 @@ module.exports = {
 
   patchUserPasswordModel: (setPass, id) => {
     return new Promise((resolve, reject) => {
-      connection.query(
-        "UPDATE users SET ? WHERE id = ?",
-        [setPass, id],
+      client.query(
+        `UPDATE users SET password = '${setPass.password}' WHERE id = ${id}`,
         (error) => {
           if (!error) {
             const newResult = {
